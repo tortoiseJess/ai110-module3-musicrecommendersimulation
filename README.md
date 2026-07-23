@@ -18,17 +18,31 @@ Replace this paragraph with your own summary of what your version does.
 ## How The System Works
 
 Explain your design in plain language.
+ The scoring rule I used uses genre, mood, energy, and acousticness; tempo_bpm, valence, and danceability are stored but not yet used in scoring to keep it simple and also in adherence with UserProfile
+UserProfile will store:
+1.favorite_genre (str) — exact-match target
+2.favorite_mood (str) — exact-match target
+3.target_energy (float, 0–1) — desired energy level to get close to, not maximize
+4.likes_acoustic (bool) — whether the user prefers high-acousticness songs
 
-Some prompts to answer:
+Recommender will use this simple but intuitive formula to compute score:
+score = 0.4*genre_match + 0.3*mood_match + 0.2*energy_closeness + 0.1*acoustic_match
+ie genre_match / mood_match: 1.0 if exact string match to the user's favorite, else 0.0
+energy_closeness: 1 - (song.energy - user.target_energy)**2 — rewards proximity to the target rather than "higher is always better" --the AI suggested this square becuase one would want to punish big misses more than small ones (e.g., 0.5 off should hurt a lot more than two 0.25-off songs would suggest).
+This is the more common choice in recommenders because near-matches barely get penalized while a song way off-target gets crushed — it makes rankings more decisive.
+acoustic_match: rewards high acousticness if likes_acoustic is True (and low if False)
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+The reason of those weights is due to :
+Genre (0.4, highest) — genre is close to an identity statement. "I like jazz" is a durable, deliberate preference someone states about themselves, not a mood. It's also the most user-controllable input we have (they typed it directly), so it deserves the most trust.
+Mood (0.3) — mood is real taste signal but more situational than genre — someone who loves lofi generally might still want "intense" on a given day. It matters, but it's more of a filter/vibe than a core identity trait, so it sits just below genre.
+Energy (0.2) — energy is a continuous number, and continuous features are inherently "softer" matches (near-misses still score well via the closeness formula), so giving it a smaller weight keeps it as a fine-tuning signal rather than a dominant one. It also somewhat overlaps with mood (intense↔high energy, chill↔low energy), so weighting it heavily risks double-counting mood's influence.
+Acousticness (0.1, lowest) — it's a single binary-ish preference (likes_acoustic) about one audio characteristic, the narrowest and most granular of the four. It's useful as a tiebreaker-level nudge, not a primary driver.
 
-You can include a simple diagram or bullet list if helpful.
+we choose which songs to recommend based on the Ranking Rule: recommend_songs/Recommender.recommend calls score_song on every song in the catalog, sorts the results by score descending, and returns the top k. Ties aren't currently broken by anything beyond original list order. 
 
+Potential biases in this system
+Over-prioritizes genre, at mood's expense. With genre weighted at 0.4 vs. mood at 0.3, a song can lose to a worse-matching-mood song purely for having the "right" genre
+Penalizes cross-genre discovery. Because genre match is all-or-nothing (exact string equality), the system can never recommend something adjacent to a user's stated genre (e.g., "indie pop" for a "pop" fan) there is no nlp involved at this stage.
 ---
 
 ## Getting Started
