@@ -178,5 +178,181 @@ Write 1 to 2 paragraphs here about what you learned:
 - about how recommenders turn data into predictions
 - about where bias or unfairness could show up in systems like this
 
+sample profile and output (standard) ---only showing 3 recommendations to save space
+Top Recommendations for: High-Energy Pop
+============================================================
+
+1. Sunrise City — Neon Echo
+   Score: 0.98
+   Reasons:
+     - genre match (+0.40)
+     - mood match (+0.30)
+     - energy closeness 0.82 vs target 0.80 (+0.20)
+     - acousticness fit (+0.08)
+
+2. Gym Hero — Max Pulse
+   Score: 0.69
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (intense vs happy) (+0.00)
+     - energy closeness 0.93 vs target 0.80 (+0.20)
+     - acousticness fit (+0.10)
+
+3. Rooftop Lights — Indigo Parade
+   Score: 0.56
+   Reasons:
+     - genre mismatch (indie pop vs pop) (+0.00)
+     - mood match (+0.30)
+     - energy closeness 0.76 vs target 0.80 (+0.20)
+     - acousticness fit (+0.07)
+
+============================================================
+
+Top Recommendations for: Chill Lofi
+============================================================
+
+1. Library Rain — Paper Lanterns
+   Score: 0.68
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (chill vs calm) (+0.00)
+     - energy closeness 0.35 vs target 0.20 (+0.20)
+     - acousticness fit (+0.09)
+
+2. Focus Flow — LoRoom
+   Score: 0.67
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (focused vs calm) (+0.00)
+     - energy closeness 0.40 vs target 0.20 (+0.19)
+     - acousticness fit (+0.08)
+
+3. Midnight Coding — LoRoom
+   Score: 0.66
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (chill vs calm) (+0.00)
+     - energy closeness 0.42 vs target 0.20 (+0.19)
+     - acousticness fit (+0.07)
+
+============================================================
+
+Top Recommendations for: Deep Intense Rock
+============================================================
+
+1. Storm Runner — Voltline
+   Score: 0.99
+   Reasons:
+     - genre match (+0.40)
+     - mood match (+0.30)
+     - energy closeness 0.91 vs target 0.90 (+0.20)
+     - acousticness fit (+0.09)
+
+2. Gym Hero — Max Pulse
+   Score: 0.59
+   Reasons:
+     - genre mismatch (pop vs rock) (+0.00)
+     - mood match (+0.30)
+     - energy closeness 0.93 vs target 0.90 (+0.20)
+     - acousticness fit (+0.10)
+
+3. Crimson Riot — Ashfall
+   Score: 0.30
+   Reasons:
+     - genre mismatch (metal vs rock) (+0.00)
+     - mood mismatch (angry vs intense) (+0.00)
+     - energy closeness 0.97 vs target 0.90 (+0.20)
+     - acousticness fit (+0.10)
+
+Top Recommendations for: Conflicting: High-Energy Sad
+============================================================
+
+1. Storm Runner — Voltline
+   Score: 0.69
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (intense vs sad) (+0.00)
+     - energy closeness 0.91 vs target 0.90 (+0.20)
+     - acousticness fit (+0.09)
+
+2. Crossroads Blues — Willow Hart
+   Score: 0.47
+   Reasons:
+     - genre mismatch (blues vs rock) (+0.00)
+     - mood match (+0.30)
+     - energy closeness 0.33 vs target 0.90 (+0.14)
+     - acousticness fit (+0.03)
+
+3. Crimson Riot — Ashfall
+   Score: 0.30
+   Reasons:
+     - genre mismatch (metal vs rock) (+0.00)
+     - mood mismatch (angry vs sad) (+0.00)
+     - energy closeness 0.97 vs target 0.90 (+0.20)
+     - acousticness fit (+0.10)
+
+============================================================
+
+Top Recommendations for: Edge Case: Out-of-Range Energy
+============================================================
+
+1. Sunrise City — Neon Echo
+   Score: 0.03
+   Reasons:
+     - genre match (+0.40)
+     - mood match (+0.30)
+     - energy closeness 0.82 vs target 3.00 (+-0.75)
+     - acousticness fit (+0.08)
+
+2. Gym Hero — Max Pulse
+   Score: -0.16
+   Reasons:
+     - genre match (+0.40)
+     - mood mismatch (intense vs happy) (+0.00)
+     - energy closeness 0.93 vs target 3.00 (+-0.66)
+     - acousticness fit (+0.10)
+
+3. Rooftop Lights — Indigo Parade
+   Score: -0.44
+   Reasons:
+     - genre mismatch (indie pop vs pop) (+0.00)
+     - mood match (+0.30)
+     - energy closeness 0.76 vs target 3.00 (+-0.80)
+     - acousticness fit (+0.07)
+
+============================================================
+
+Top Recommendations for: Edge Case: Unknown Genre/Mood
+============================================================
+
+1. Coffee Shop Stories — Slow Stereo
+   Score: 0.29
+   Reasons:
+     - genre mismatch (jazz vs opera) (+0.00)
+     - mood mismatch (relaxed vs ecstatic) (+0.00)
+     - energy closeness 0.37 vs target 0.50 (+0.20)
+     - acousticness fit (+0.09)
+
+2. Slow Waltz for You — Eleanor Vance
+   Score: 0.28
+   Reasons:
+     - genre mismatch (classical vs opera) (+0.00)
+     - mood mismatch (romantic vs ecstatic) (+0.00)
+     - energy closeness 0.25 vs target 0.50 (+0.19)
+     - acousticness fit (+0.10)
+
+3. Spacewalk Thoughts — Orbit Bloom
+   Score: 0.28
+   Reasons:
+     - genre mismatch (ambient vs opera) (+0.00)
+     - mood mismatch (chill vs ecstatic) (+0.00)
+     - energy closeness 0.28 vs target 0.50 (+0.19)
+     - acousticness fit (+0.09)
 
 
+
+Explanation of one case: Conflicting: High-Energy Sad profile.
+Storm Runner --it is the only rock song (rock, intense, energy=0.91, acousticness=0.10) wins because the genre match dominates — even though it completely fails on mood
+even though Crossroads Blues is the only genuinely "sad" song, it loses to Storm Runner (0.69 vs 0.47) because:
+Genre is weighted higher than mood (0.4 vs 0.3) — matching the requested genre alone beats matching mood alone.
+Storm Runner's energy (0.91) is almost a perfect hit on the target (0.9), while Crossroads Blues' energy (0.33) is very far off, and the energy term is squared — so being far off costs a lot.
