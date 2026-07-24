@@ -30,9 +30,11 @@ class UserProfile:
     target_energy: float
     likes_acoustic: bool
 
-GENRE_WEIGHT = 0.4
+# GENRE_WEIGHT = 0.4
+# ENERGY_WEIGHT = 0.2
+GENRE_WEIGHT = 0.2   # halved: genre now counts half as much
 MOOD_WEIGHT = 0.3
-ENERGY_WEIGHT = 0.2
+ENERGY_WEIGHT = 0.4  # doubled: energy now counts twice as much
 ACOUSTIC_WEIGHT = 0.1
 
 class Recommender:
