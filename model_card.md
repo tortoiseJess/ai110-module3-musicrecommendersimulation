@@ -2,60 +2,40 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**Claw Recommender**
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+Claw Recommender takes a simple user profile (favorite genre, favorite mood, target energy, and whether they like acoustic songs) and ranks a small song catalog to suggest the best matches. It's built for classroom exploration of how recommender scoring works, not for real listeners. It assumes a person's whole music taste can be boiled down to those four traits, which is a big simplification.
 
 ---
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
+Every song gets a score out of 1.0, built from four pieces:
 
-Prompts:  
+- **Genre match** — full points if the song's genre matches the user's favorite genre, zero if not. Worth 20% of the score.
+- **Mood match** — full points if the song's mood matches the user's favorite mood, zero if not. Worth 30% of the score.
+- **Energy closeness** — the closer the song's energy is to the user's target energy, the more points. Being off by a little costs a little; being off by a lot costs a lot more (the penalty grows faster than the gap itself). Worth 40% of the score.
+- **Acoustic fit** — rewards acoustic songs for users who like acoustic, and rewards non-acoustic songs for users who don't. Worth 10% of the score.
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+These four pieces are added up, and the app prints the top-scoring songs with plain-English reasons for each score. The starter logic weighted genre highest (0.4) and energy lowest (0.2); we flipped that so energy now matters most (0.4) and genre matters less (0.2).
 
 ---
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The catalog is tiny: 18 songs in `data/songs.csv`, each with a genre, mood, energy, tempo, valence, danceability, and acousticness score. There are 15 different genres represented (pop, lofi, rock, ambient, jazz, synthwave, indie pop, folk, hip-hop, country, reggae, metal, classical, edm, blues), but most genres only have one song each — only pop and lofi have more than one. With so few songs per genre, there's not much real choice within a genre, and whole styles of music (like R&B, latin, or k-pop) aren't represented at all.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+- For users whose favorite genre has more than one song (pop, lofi), the recommender does a good job surfacing songs that match on genre and mood together, like "Sunrise City" for a happy, high-energy pop fan.
+- The energy-closeness scoring correctly ranks near-target songs above far-off ones — a user wanting energy 0.9 reliably gets pointed at the catalog's loudest, fastest tracks (Storm Runner, Crimson Riot, Gym Hero).
+- The explanations are easy to read and make it clear *why* a song was recommended, which is good for teaching/debugging the scoring logic.
 
 ---
 
@@ -97,9 +77,10 @@ No need for numeric metrics unless you created some.
 | High-Energy Pop | #1 Sunrise City, #2 Gym Hero, #3 Rooftop Lights | #1 Sunrise City, #2 **Rooftop Lights**, #3 Gym Hero |
 | Deep Intense Rock | #1 Storm Runner, #2 Gym Hero (0.59) | #1 Storm Runner, #2 Gym Hero (**0.79**) |
 
-**What surprised me:** I expected genre to matter less, but I didn't expect it to change the ranking order between two other genre-mismatched songs instead. Rooftop Lights (`indie pop`, not an exact `pop` match) jumped ahead of Gym Hero (an exact genre match) for the High-Energy Pop profile, purely because its energy (0.76) sits closer to the target (0.80) than Gym Hero's mood mismatch could offset. This makes sense once you see the math: with genre worth only 0.2, a genre mismatch (0.0) plus a mood match (0.3) can outscore a genre match (0.2) plus a mood mismatch (0.0) if energy closeness tips the balance.
+**What I learnt from the tests/ Surprises:** I expected genre to matter less, but I didn't expect it to change the ranking order between two other genre-mismatched songs instead. Rooftop Lights (`indie pop`, not an exact `pop` match) jumped ahead of Gym Hero (an exact genre match) for the High-Energy Pop profile, purely because its energy (0.76) sits closer to the target (0.80) than Gym Hero's mood mismatch could offset. This makes sense once you see the math: with genre worth only 0.2, a genre mismatch (0.0) plus a mood match (0.3) can outscore a genre match (0.2) plus a mood mismatch (0.0) if energy closeness tips the balance.
 
 I also noticed Gym Hero (`pop`/`intense`) is a strong pick for *both* the High-Energy Pop and Deep Intense Rock profiles under the shifted weights, even though it's only a genre match for one of them. That's a direct consequence of boosting energy's weight: two profiles with similar target energy (0.8 and 0.9) start converging on the same "high energy" songs regardless of genre, which shows the model is now weighting energy over genre — a real tradeoff. 
+I also noticed usually the top song recommended has the exact match but all the other ones that follow is unrelated and are there because of energy/ acoustic contributions to the scoring function.
 
 ---
 
@@ -115,15 +96,18 @@ Prompts:
 - Handling more complex user tastes  
 
 I think it would be cool if we have enough data to do a ML model on the weights so its learnt instead of fixed.
+For the interface, in addition to user profile, it would be great to include a chatbot for the user to ask what she wants because it largely depends on what she needs to do while playing the music.
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
+The biggest learning moment was the weight-shift experiment in section 7: bumping `ENERGY_WEIGHT` from 0.2 to 0.4 didn't just reorder songs within a genre, it let energy override genre matches entirely (Rooftop Lights beating Gym Hero, Gym Hero showing up as a top pick for both the pop and rock profiles). That's when it really clicked that a recommender isn't "smart" or "dumb" — it's just arithmetic, and every weight you pick is a value judgment about what should matter, with tradeoffs you often don't see until you test edge cases.
 
-Prompts:  
+AI helped with generating experiments and additional songs. It somehow got the code writing wrong this time.
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+It surprised me that simple algorithms can still feel like real recommendations based on simple weighted sums and ranking logic. Modern recommendation apps may be a bunch of weighted sums and scores leading to my recommendation playlist. I also learnt the model is very easy to fall into bias towards certain songs or user profiles get more accurate recommendations.
+
+I would want to expand this futher to incorporate NLP in the mood and genre instead of a string match. 
+
+
